@@ -3,19 +3,37 @@ import {
     Card, CardActions, CardContent, CardMedia, Button,
     Typography, Grid
 } from '@mui/material'
+
 export async function getData() {
-    const res = await
-        fetch(`http://localhost:3000/api/attractions`)
-    if (!res.ok) {
-        throw new Error('Failed to fetch data')
+    // Debug: log the API URL
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_URL)
+    try {
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/api/attractions`
+        console.log('Fetching:', url)
+        // Use { cache: 'no-store' } for SSR fetch in Next.js app directory
+        const res = await fetch(url, { cache: 'no-store' })
+        if (!res.ok) {
+            throw new Error('Failed to fetch data')
+        }
+        return res.json()
+    } catch (err) {
+        // Log error for debugging
+        console.error('Fetch error:', err)
+        return []
     }
-    return res.json()
 }
+
 export default async function page() {
     if (!process.env.NEXT_PUBLIC_API_URL) {
-        return null
+        // Log missing env
+        console.error('NEXT_PUBLIC_API_URL is not set')
+        return <div>API URL not configured.</div>
     }
     const data = await getData()
+    // Defensive: handle if data is not an array
+    if (!Array.isArray(data)) {
+        return <div>Failed to load attractions.</div>
+    }
     return (
         <div>
             <Typography variant='h5'>Attractions</Typography>
