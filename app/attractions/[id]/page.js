@@ -5,8 +5,7 @@ Button, Typography
 } from '@mui/material';
 export async function getData(id) {
 const res = await
-fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/attractions/$
-{id}/`)
+fetch(`http://localhost:3000/api/attractions/${id}/`)
 if (!res.ok) {
 throw new Error('Failed to fetch data')
 }
